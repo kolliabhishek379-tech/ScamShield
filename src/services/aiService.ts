@@ -3,6 +3,7 @@ import { analyzeUrlLocally } from './urlAnalyzer';
 import { analyzeMessageLocally } from './messageAnalyzer';
 import { analyzeImageLocally, ImageAnalysisOptions } from './imageAnalyzer';
 import { buildQRAnalysis } from './qrAnalyzer';
+
 const API_BASE_URL = 'https://scamshield-backend-elhf.onrender.com';
 
 const STORAGE_KEY_HISTORY = 'scamshield_scan_history';
@@ -27,7 +28,7 @@ export class AIService {
 
     if (cloudAllowed) {
       try {
-        const res = await fetch('/api/analyze/link', {
+        const res = await fetch(`${API_BASE_URL}/api/analyze/link`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ url, platform }),
@@ -57,7 +58,7 @@ export class AIService {
 
     if (cloudAllowed) {
       try {
-        const res = await fetch('/api/analyze/message', {
+        const res = await fetch(`${API_BASE_URL}/api/analyze/message`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ text, platform }),
@@ -89,7 +90,7 @@ export class AIService {
 
     if (cloudAllowed) {
       try {
-        const res = await fetch('/api/analyze/image', {
+        const res = await fetch(`${API_BASE_URL}/api/analyze/image`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -126,7 +127,7 @@ export class AIService {
 
     if (cloudAllowed) {
       try {
-        const res = await fetch('/api/analyze/screenshot', {
+        const res = await fetch(`${API_BASE_URL}/api/analyze/screenshot`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -158,12 +159,15 @@ export class AIService {
   }
 
   // Analyze QR Data
-  static async analyzeQR(qrData: string, platform: SocialPlatform = 'Other'): Promise<AnalysisResult> {
+  static async analyzeQR(
+    qrData: string,
+    platform: SocialPlatform = 'Other'
+  ): Promise<AnalysisResult> {
     const cloudAllowed = this.isCloudAnalysisEnabled();
 
     if (cloudAllowed) {
       try {
-        const res = await fetch('/api/analyze/qr', {
+        const res = await fetch(`${API_BASE_URL}/api/analyze/qr`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ qrData, platform }),
@@ -187,13 +191,18 @@ export class AIService {
   }
 
   // Analyze Media
-  static async analyzeMedia(filename: string, sizeBytes: number, platform: SocialPlatform = 'Other'): Promise<AnalysisResult> {
+  static async analyzeMedia(
+    filename: string,
+    sizeBytes: number,
+    platform: SocialPlatform = 'Other'
+  ): Promise<AnalysisResult> {
     try {
-      const res = await fetch('/api/analyze/media', {
+      const res = await fetch(`${API_BASE_URL}/api/analyze/media`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ filename, sizeBytes, platform }),
       });
+
       if (res.ok) {
         const data = await res.json();
         this.saveToHistory(data);
@@ -220,25 +229,35 @@ export class AIService {
           id: 'sig-fallback-media',
           title: 'Basic Media Inspection Available',
           severity: 'info',
-          description: 'Basic format headers, container metadata, and bitstream structure checked.',
+          description:
+            'Basic format headers, container metadata, and bitstream structure checked.',
         },
         {
           id: 'sig-fallback-next',
           title: 'Advanced Deepfake Model Notice',
           severity: 'low',
-          description: 'Advanced temporal deepfake model: Coming in the next model version.',
-        }
+          description:
+            'Advanced temporal deepfake model: Coming in the next model version.',
+        },
       ],
-      mediaNote: 'Basic inspection available. Advanced deepfake model: Coming in the next model version.',
+      mediaNote:
+        'Basic inspection available. Advanced deepfake model: Coming in the next model version.',
       explanation: {
-        whatWeDetected: ['Basic codec information validated', 'Full temporal neural analysis deferred'],
-        whyItMatters: 'Deepfake video generation requires heavy temporal frame processing.',
+        whatWeDetected: [
+          'Basic codec information validated',
+          'Full temporal neural analysis deferred',
+        ],
+        whyItMatters:
+          'Deepfake video generation requires heavy temporal frame processing.',
         whyFlaggedSummary: 'Basic media analysis performed.',
       },
-      recommendations: ['Do not rely on single-frame or basic inspection for video authentication.'],
+      recommendations: [
+        'Do not rely on single-frame or basic inspection for video authentication.',
+      ],
       isDemo: false,
       isCloudAnalysis: false,
     };
+
     this.saveToHistory(fallback);
     return fallback;
   }
@@ -246,6 +265,7 @@ export class AIService {
   // History & Storage (No raw media files stored!)
   static getHistory(): ScanHistoryItem[] {
     if (typeof window === 'undefined') return [];
+
     try {
       const raw = localStorage.getItem(STORAGE_KEY_HISTORY);
       if (!raw) return [];
@@ -257,8 +277,10 @@ export class AIService {
 
   static saveToHistory(result: AnalysisResult): void {
     if (typeof window === 'undefined') return;
+
     try {
       const history = this.getHistory();
+
       const item: ScanHistoryItem = {
         id: result.id,
         timestamp: result.timestamp,
@@ -272,8 +294,15 @@ export class AIService {
       };
 
       // Keep latest 50 items
-      const updated = [item, ...history.filter(h => h.id !== item.id)].slice(0, 50);
-      localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(updated));
+      const updated = [
+        item,
+        ...history.filter((h) => h.id !== item.id),
+      ].slice(0, 50);
+
+      localStorage.setItem(
+        STORAGE_KEY_HISTORY,
+        JSON.stringify(updated)
+      );
     } catch (e) {
       console.warn('Failed to save to history:', e);
     }
@@ -290,22 +319,33 @@ export class AIService {
     const now = Date.now();
     const oneDayAgo = now - 24 * 60 * 60 * 1000;
 
-    const scansToday = history.filter(h => h.timestamp >= oneDayAgo).length;
-    const potentialThreats = history.filter(h => h.riskScore >= 61).length;
-    const highRiskCount = history.filter(h => h.riskLevel === 'HIGH').length;
-    const lowRiskCount = history.filter(h => h.riskLevel === 'LOW').length;
+    const scansToday = history.filter(
+      (h) => h.timestamp >= oneDayAgo
+    ).length;
+
+    const potentialThreats = history.filter(
+      (h) => h.riskScore >= 61
+    ).length;
+
+    const highRiskCount = history.filter(
+      (h) => h.riskLevel === 'HIGH'
+    ).length;
+
+    const lowRiskCount = history.filter(
+      (h) => h.riskLevel === 'LOW'
+    ).length;
 
     // Threat distribution
     const categoryCounts: Record<string, number> = {
-      'Phishing': 0,
+      Phishing: 0,
       'Financial Scam': 0,
-      'Impersonation': 0,
+      Impersonation: 0,
       'AI/Deepfake Manipulation': 0,
       'Fake Giveaway': 0,
       'QR Scam': 0,
     };
 
-    history.forEach(item => {
+    history.forEach((item) => {
       if (categoryCounts[item.category] !== undefined) {
         categoryCounts[item.category]++;
       }
@@ -313,7 +353,10 @@ export class AIService {
 
     return {
       totalScans: history.length,
-      scansToday: Math.max(scansToday, history.length > 0 ? 1 : 0),
+      scansToday: Math.max(
+        scansToday,
+        history.length > 0 ? 1 : 0
+      ),
       potentialThreats,
       highRiskCount,
       lowRiskCount,
