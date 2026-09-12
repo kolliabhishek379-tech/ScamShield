@@ -1,0 +1,6 @@
+{
+  "name": "Scam Shield",
+  "description": "AI-powered social media scam detection for links, messages, images, screenshots, QR codes, and media.",
+  "requestFramePermissions": ["camera"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

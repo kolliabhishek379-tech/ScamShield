@@ -1,0 +1,142 @@
+import { SpotTheGlitchScenario } from '../types/analysis';
+
+export const SPOT_THE_GLITCH_SCENARIOS: SpotTheGlitchScenario[] = [
+  {
+    id: 'glitch-1-ig-security',
+    title: 'Challenge 1: The "Meta Copyright Violation" DM',
+    category: 'Account Takeover',
+    platform: 'Instagram',
+    type: 'message',
+    prompt: 'You receive this direct message on Instagram claiming your account violates copyright laws. Which elements in this message are deceptive red flags?',
+    content: {
+      sender: 'Meta Support Center (@meta_help_desk_agent942)',
+      avatar: '🛡️',
+      text: '⚠️ URGENT NOTICE: Your Instagram account has violated copyright policy #9924. Your profile will be permanently deleted in 24 HOURS unless you appeal. Fill out the official appeal form to retain your verification badge: https://meta-helpdesk-appeal-verify.online/auth',
+    },
+    glitches: [
+      {
+        id: 'g1-handle',
+        title: 'Unofficial Username Handle (@meta_help_desk_agent942)',
+        description: 'Official Meta support communications arrive via in-app notification centers or official verified handles, never random numeric handles.',
+        isCorrect: true,
+        hint: 'Inspect the handle name and numbers closely.',
+      },
+      {
+        id: 'g1-urgency',
+        title: 'Artificial 24-Hour Deletion Threat',
+        description: 'Imposing extreme time pressure is a deliberate psychological manipulation tactic to prevent you from consulting friends or official help.',
+        isCorrect: true,
+        hint: 'Notice the panic-inducing countdown timer.',
+      },
+      {
+        id: 'g1-domain',
+        title: 'Phishing Domain on ".online" Registry',
+        description: 'The URL uses "meta-helpdesk-appeal-verify.online" instead of the authentic "instagram.com" or "meta.com" root domains.',
+        isCorrect: true,
+        hint: 'Look at the root domain before the slash.',
+      },
+      {
+        id: 'g1-badge',
+        title: 'Standard Copyright Policy Citation',
+        description: 'Mentioning a policy number sounds formal, but fraudsters invent random numerals to look authoritative.',
+        isCorrect: false,
+        hint: 'While deceptive in purpose, this is standard text fluff.',
+      },
+    ],
+    explanation: 'Scammers frequently clone Meta logos and message creators with bogus copyright claims. They count on victims panicking over losing their audience and hurriedly inputting their login password and 2FA credentials on a clone page.',
+    takeaway: 'Never appeal a copyright claim via a link sent in a DM. Official copyright notices will always show under Settings > Account Status in the official Instagram app.',
+  },
+
+  {
+    id: 'glitch-2-ai-influencer',
+    title: 'Challenge 2: The "AI Generated Crypto Guru" Profile',
+    category: 'AI/Deepfake Manipulation',
+    platform: 'X',
+    type: 'image',
+    prompt: 'A new crypto mentor profile followed you and DM’d you an investment offer. You examine their profile picture closely. Which visual anomalies suggest this face is synthetic?',
+    content: {
+      sender: 'Elena Vance | Web3 Wealth Coach (@elena_wealth_ai)',
+      avatar: '👩‍💼',
+      imageUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80',
+      text: 'Examine the portrait above: In synthetic diffusion models, fine symmetrical anatomy and background context frequently suffer from generative artifacts.',
+    },
+    glitches: [
+      {
+        id: 'g2-pupils',
+        title: 'Mismatched Eye Reflections (Catchlights)',
+        description: 'In real photography, both eyes reflect the same physical environment. AI models frequently paint mismatched lighting highlights in each eye.',
+        isCorrect: true,
+        hint: 'Check the tiny light glints inside both pupils.',
+      },
+      {
+        id: 'g2-earrings',
+        title: 'Asymmetric or Melted Earring Details',
+        description: 'Generative models struggle with physical objects like matching jewelry, often drawing one earring melting into hair and the other completely different.',
+        isCorrect: true,
+        hint: 'Inspect accessories on both sides of the face.',
+      },
+      {
+        id: 'g2-teeth',
+        title: 'Continuous or Misaligned Teeth Texture',
+        description: 'Diffusion portraiture frequently renders teeth as a smooth porcelain bar without realistic gum boundaries or distinct incisor separations.',
+        isCorrect: true,
+        hint: 'Look closely at dental anatomy and tooth edges.',
+      },
+      {
+        id: 'g2-color',
+        title: 'Vibrant Blue Background Color',
+        description: 'A colorful backdrop is common in professional studio photography and is not inherently indicative of manipulation.',
+        isCorrect: false,
+        hint: 'Color choice alone is not a biometric artifact.',
+      },
+    ],
+    explanation: 'Modern romance and pig-butchering fraudsters use generative AI faces from tools like StyleGAN or Midjourney because these faces do not show up on conventional reverse-image search indexes until the account has been active for weeks.',
+    takeaway: 'Pay special attention to small details: earlobes, matching accessories, eyeglasses bridges, pupil shapes, and background text.',
+  },
+
+  {
+    id: 'glitch-3-whatsapp-relative',
+    title: 'Challenge 3: The "Hi Mom, I Lost My Phone" WhatsApp Text',
+    category: 'Impersonation',
+    platform: 'WhatsApp',
+    type: 'message',
+    prompt: 'You receive a WhatsApp message from an unknown number claiming to be a close family member who lost their phone. What are the telltale scam indicators here?',
+    content: {
+      sender: 'Unknown Number (+1 555-019-3829)',
+      avatar: '💬',
+      text: 'Hi Mum! I dropped my phone in the sink and this is my temporary number. I’m in a huge panic because I have an urgent bill due in 30 minutes and my banking app won’t verify on this device. Can you please transfer $680 to this account for me? Sort Code 40-12-88 Acc 91028472. I will pay you back tonight!',
+    },
+    glitches: [
+      {
+        id: 'g3-number',
+        title: 'Unsolicited Message From Unrecognized Number',
+        description: 'Claiming a phone was dropped in water or lost is the primary pretext used to explain why the message comes from an unknown sender.',
+        isCorrect: true,
+        hint: 'Why is this person texting from an unfamiliar contact?',
+      },
+      {
+        id: 'g3-urgent-bill',
+        title: 'Extreme Urgency with 30-Minute Deadline',
+        description: 'Pressure is applied so the victim transfers money before calling their real child on their original phone or checking with other relatives.',
+        isCorrect: true,
+        hint: 'Look at the time pressure attached to the payment.',
+      },
+      {
+        id: 'g3-direct-transfer',
+        title: 'Immediate Request for Direct Bank Transfer',
+        description: 'Peer-to-peer bank transfers (Faster Payments/Zelle/UPI) clear instantly and are practically impossible to reverse once sent.',
+        isCorrect: true,
+        hint: 'What action is being demanded?',
+      },
+      {
+        id: 'g3-polite',
+        title: 'Warm and Familiar Salutation',
+        description: 'Using words like "Mum" or "Dad" is broad enough to fit millions of potential recipients without knowing their names.',
+        isCorrect: true,
+        hint: 'Generic familial greetings are cast out as wide nets.',
+      },
+    ],
+    explanation: 'The "Hi Mum / Hi Dad" family impersonation scam costs consumers hundreds of millions each year. Scammers harvest phone directories and send mass messages hoping anxious parents will wire money without verifying.',
+    takeaway: 'Always pause and call the person’s original known phone number, or ask a private personal question only your real family member would know (like a pet’s nickname).',
+  },
+];
