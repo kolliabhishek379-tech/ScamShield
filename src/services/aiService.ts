@@ -3,6 +3,7 @@ import { analyzeUrlLocally } from './urlAnalyzer';
 import { analyzeMessageLocally } from './messageAnalyzer';
 import { analyzeImageLocally, ImageAnalysisOptions } from './imageAnalyzer';
 import { buildQRAnalysis } from './qrAnalyzer';
+const API_BASE_URL = 'https://scamshield-backend-elhf.onrender.com';
 
 const STORAGE_KEY_HISTORY = 'scamshield_scan_history';
 const STORAGE_KEY_PRIVACY_MODE = 'scamshield_privacy_cloud_opt_in';
